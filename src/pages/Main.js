@@ -66,7 +66,7 @@ const dappReducer = (state, action) => {
   switch (action.type) {
     case 'SET_isConnecting':
       return { ...state, isConnecting: action.isConnecting }
-    case 'SET_donateValue':
+    case 'SET_buyTokens':
       return { ...state, nbToken: action.nbToken }
     default:
       throw new Error(`Unhandled action ${action.type} in dappReducer`)
@@ -213,7 +213,7 @@ function Main() {
                   max={1000000}
                   onChange={(currentnbToken) => {
                     dappDispatch({
-                      type: 'SET_nbToken',
+                      type: 'SET_buyTokens',
                       nbToken: currentnbToken,
                     })
                   }}
