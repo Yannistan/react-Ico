@@ -45,8 +45,8 @@ const web3Reducer = (state, action) => {
       return { ...state, network: action.network }
     case 'SET_signer':
       return { ...state, signer: action.signer }
-    case 'SET_balance':
-      return { ...state, balance: action.balance }
+   // case 'SET_balance':
+     // return { ...state, amount: action.amount }
     default:
       throw new Error(`Unhandled action ${action.type} in web3Reducer`)
   }
@@ -59,7 +59,7 @@ const initialWeb3State = {
   provider: null,
   signer: null,
   network: null,
-  balance: '0',
+ // amount: '0',
 }
 
 const dappReducer = (state, action) => {
@@ -67,16 +67,16 @@ const dappReducer = (state, action) => {
     case 'SET_isConnecting':
       return { ...state, isConnecting: action.isConnecting }
     case 'SET_donateValue':
-      return { ...state, donateValue: action.donateValue }
+      return { ...state, nbToken: action.nbToken }
     default:
       throw new Error(`Unhandled action ${action.type} in dappReducer`)
   }
 }
 
 const initialDappState = {
-  donateValue: 0.04,
+  nbToken: 0.04,
   isConnecting: false,
-  myAddr: '0x57D401B8502bC5CBBaAfD2564236dE4571165051',
+  myAddr: '0xa7BC38582C4C2992467ccC23B49B2d053fF57339',
 }
 
 function Main() {
@@ -103,7 +103,7 @@ function Main() {
       const account = await isConnected2MetaMask()
       if (account) {
         web3Dispatch({ type: 'SET_isEnabled', isEnabled: true })
-        web3Dispatch({ type: 'SET_account', account: account })
+        //web3Dispatch({ type: 'SET_account', account: account })
       } else {
         web3Dispatch({ type: 'SET_isEnabled', isEnabled: false })
       }
@@ -150,13 +150,13 @@ function Main() {
         const network = await provider.getNetwork()
         web3Dispatch({ type: 'SET_network', network: network })
         // https://docs.ethers.io/v5/api/providers/provider/#Provider-getBalance
-        const _balance = await provider.getBalance(web3State.account)
+       // const _totalSupply = await provider.getBalance(web3State.account)
         // https://docs.ethers.io/v5/api/utils/display-logic/#utils-formatEther
-        const balance = ethers.utils.formatEther(_balance)
-        web3Dispatch({ type: 'SET_balance', balance: balance })
+       // const amount = ethers.utils.formatUnits(_totalSupply)
+       // web3Dispatch({ type: 'SET_amount', amount: amount })
       } catch (e) {
         web3Dispatch({ type: 'SET_network', network: initialWeb3State.network })
-        web3Dispatch({ type: 'SET_balance', balance: initialWeb3State.balance })
+       // web3Dispatch({ type: 'SET_amount', amount: initialWeb3State.amount })
       }
     }
 
@@ -171,9 +171,9 @@ function Main() {
   return (
     <>
       <VStack>
-        <Heading>Web3 demo 2</Heading>
+        <Heading>Welcome to my Ico</Heading>
         <Heading mb={10} size="lg">
-          Connection, transaction and smart contracts
+          Connection and exchange of tokens
         </Heading>
 
         {!web3State.isWeb3 && <Text>Please install MetaMask</Text>}
@@ -193,7 +193,7 @@ function Main() {
               </Text>
               <Text>account: {web3State.account}</Text>
 
-              <Text>balance: {web3State.balance}</Text>
+             
 
               {web3State.network && (
                 <>
@@ -205,16 +205,16 @@ function Main() {
 
               <HStack>
                 <NumberInput
-                  value={dappState.donateValue}
-                  defaultValue={initialDappState.donateValue}
-                  precision={3}
-                  step={0.02}
+                  value={dappState.nbToken}
+                  defaultValue={initialDappState.nbToken}
+                  precision={7}
+                  step={1}
                   min={0}
-                  max={web3State.balance}
-                  onChange={(currentDonateValue) => {
+                  max={1000000}
+                  onChange={(currentnbToken) => {
                     dappDispatch({
-                      type: 'SET_donateValue',
-                      donateValue: currentDonateValue,
+                      type: 'SET_nbToken',
+                      nbToken: currentnbToken,
                     })
                   }}
                 >
@@ -231,12 +231,12 @@ function Main() {
                       web3State.provider,
                       {
                         to: dappState.myAddr,
-                        value: ethers.utils.parseEther(dappState.donateValue),
+                        value: ethers.utils.parseUnits(dappState.nbToken, 18),
                       }
                     )
                   }
                 >
-                  Donate {dappState.donateValue} ETH
+                  Buy {dappState.nbToken} 
                 </Button>
               </HStack>
             </>
